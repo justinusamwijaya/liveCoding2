@@ -12,10 +12,16 @@
         <input name="email" type="text">
         <input name="name" type="text">
         <input name="file" type="file">
-        <button type="submit">test file</button>
+        <button type="submit">post picture</button>
     </form>
 
+    <form id="getPictures" method="post">
+        <input name="email" type="text">
+        <input name="name" type="text">
+        <button type="submit">get data</button>
+    </form>
 
+    <div id="content"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
     <script>
@@ -28,11 +34,41 @@
                 name:fileForm.name.value,
             })
             .then(function (response) {
+                console.log(response)
                 axios.post('http://localhost:3000/image',{
                     file:fileForm.file.files[0]
                 }).then(message=>{
                     console.log(message)
                 })
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        })
+        
+        let getFiles = document.getElementById('getPictures')
+
+        getFiles.addEventListener('submit',(event)=>{
+            event.preventDefault()
+            
+            axios.post('http://localhost:3000/request-token', {
+                email:getFiles.email.value,
+                name:getFiles.name.value,
+            })
+            .then(function (response) {
+                console.log(response.data.uuid)
+                axios.get('http://localhost:3000/image',{
+                    headers:{Authorization:response.data.uuid}
+                })
+                .then(function (message) {
+                    if(!message.error){
+                        document.getElementById('content').innerHTML = 'gambar berhasil didapatkan! <br>'+ message.data
+                        console.log(message)
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
             })
             .catch(function (error) {
                 console.log(error);

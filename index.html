@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+    <form id="fileForm" method="post">
+        <input name="email" type="text">
+        <input name="name" type="text">
+        <input name="file" type="file">
+        <button type="submit">test file</button>
+    </form>
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
+    <script>
+        let fileForm = document.getElementById('fileForm')
+        fileForm.addEventListener('submit',(event)=>{
+            event.preventDefault()
+            console.log(fileForm.file.files[0])
+            axios.post('http://localhost:3000/request-token', {
+                email:fileForm.email.value,
+                name:fileForm.name.value,
+            })
+            .then(function (response) {
+                axios.post('http://localhost:3000/image',{
+                    file:fileForm.file.files[0]
+                }).then(message=>{
+                    console.log(message)
+                })
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        })
+    </script>
+</body>
+</html>
